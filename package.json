@@ -1,0 +1,18 @@
+{
+  "name": "itinfo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app",
+    "server": "nodemon app"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "config": "^3.3.8",
+    "express": "^4.18.2",
+    "mongoose": "^6.6.5"
+  }
+}
