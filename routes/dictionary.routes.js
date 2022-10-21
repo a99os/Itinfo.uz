@@ -3,14 +3,14 @@ const {
   addTerm,
   getTerms,
   getTermsByLetter,
-  getTermsById,
+  getTermById,
   updateTerm,
   deleteTerm,
 } = require("../controllers/dictionary.controller");
 const router = Router();
 
 router.get("/", getTerms);
-router.get("/id/:id", getTermsById);
+router.get("/id/:id", getTermById);
 router.get("/:letter", getTermsByLetter);
 router.post("/", addTerm);
 router.put("/id/:id", updateTerm);

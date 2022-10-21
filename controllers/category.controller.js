@@ -28,7 +28,7 @@ const getCategories = (req, res) => {
   Category.find()
     .populate("parent_category_id", "category_name -_id")
     .then((data) => {
-      if (!data) return res.status(400).send({ message: "not data" });
+      if (!data.length) return res.status(400).send({ message: "not data" });
       res.status(200).send(data);
     })
     .catch((error) => errorHandler(res, error));

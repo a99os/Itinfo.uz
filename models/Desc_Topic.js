@@ -13,7 +13,7 @@ const descTopicSchema = new Schema(
       required: true,
     },
   },
-  { versionKey: true }
+  { versionKey: false }
 );
 
 module.exports = model("Desc_Topic", descTopicSchema);

@@ -7,28 +7,18 @@ const errorHandler = (res, error) => {
 };
 
 const addDesc = async (req, res) => {
-  const { dict_id, category_id, description } = req.body;
+  const { category_id, description } = req.body;
 
   if (!description)
     return res.status(400).send({ message: "Invalid description" });
 
-  if (!mongose.isValidObjectId(dict_id))
-    return res.status(400).send({ message: "Invalid objectId dict_id" });
-  if (!mongose.isValidObjectId(category_id))
+  if (category_id && !mongose.isValidObjectId(category_id))
     return res.status(400).send({ message: "Invalid objectId category_id" });
 
-  if (!(await Category.findById(category_id)))
+  if (category_id && !(await Category.findById(category_id)))
     return res.status(400).send({ message: "Not found category_id" });
-  if (!(await Dictionary.findById(dict_id)))
-    return res.status(400).send({ message: "Not found dict_id" });
 
-  if (
-    (await Description.findOne({ dict_id: dict_id })) &&
-    (await Description.findOne({ category_id: category_id }))
-  )
-    return res.status(400).send({ message: "this description already exists" });
-
-  Description({ dict_id, category_id, description })
+  Description({ category_id, description })
     .save()
     .then(() => {
       return res.status(200).send({ message: "Succesfull add description" });
@@ -38,7 +28,6 @@ const addDesc = async (req, res) => {
 
 const getDescs = async (req, res) => {
   Description.find({})
-    .populate("dict_id")
     .populate("category_id")
     .then((data) => {
       if (!data.length)
@@ -53,7 +42,6 @@ const getDescById = async (req, res) => {
     return res.status(400).send({ message: "Invalid id" });
   Description.findById(req.params.id)
     .populate("category_id")
-    .populate("dict_id")
     .then((data) => {
       if (!data)
         return res.status(400).send({ message: "Not found description" });
@@ -68,27 +56,21 @@ const updateDesc = async (req, res) => {
   if (!(await Description.findById(category_id)))
     return res.status(400).send({ message: "Not found description" });
 
-  const { dict_id, category_id, description } = req.body;
-
-  if (!dict_id && !mongose.isValidObjectId(dict_id))
-    return res.status(400).send({ message: "Invalid objectId dict_id" });
-  if (!category_id && !mongose.isValidObjectId(category_id))
-    return res.status(400).send({ message: "Invalid objectId category_id" });
-
-  if (!category_id && !(await Category.findById(category_id)))
-    return res.status(400).send({ message: "Not found category_id" });
-  if (!dict_id && !(await Dictionary.findById(dict_id)))
-    return res.status(400).send({ message: "Not found dict_id" });
+  const { category_id, description } = req.body;
   if (!description)
     return res.status(400).send({ message: "Invalid description" });
 
-  if (
-    (await Description.findOne({ dict_id: dict_id })) &&
-    (await Description.findOne({ category_id: category_id }))
-  )
-    return res.status(400).send({ message: "this description already exists" });
+  if (!category_id && !mongose.isValidObjectId(category_id))
+    return res.status(400).send({ message: "Invalid objectId category_id" });
 
-  Description.findByIdAndUpdate(req.params.id)
+  if (!(await Category.findById(category_id)))
+    return res.status(400).send({ message: "Not found category_id" });
+  const desc = await Description.findById(req.params.id);
+
+  Description.findByIdAndUpdate(req.params.id, {
+    category_id: category_id || desc.category_id,
+    description: description || desc.description,
+  })
     .then(() =>
       res.status(200).send({ message: "Succesful update description" })
     )
