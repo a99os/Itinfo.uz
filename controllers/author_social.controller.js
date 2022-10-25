@@ -2,11 +2,16 @@ const Author_Social = require("../models/Author_Social");
 const Author = require("../models/Author");
 const Social = require("../models/Social");
 const mongose = require("mongoose");
+const { auth_socValidator } = require("../validations/author_social");
 const errorHandler = (res, error) => {
   res.status(500).send({ message: "Xatolik bor: " + error });
 };
 
 const addAS = async (req, res) => {
+  const { error } = auth_socValidator(req.body);
+  if (error) return res.status(400).send({ message: error.details[0].message });
+
+  
   const { author_id, social_id, social_link } = req.body;
 
   if (!social_link) return res.status(400).send({ message: "social_link" });

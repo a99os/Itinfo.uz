@@ -12,11 +12,6 @@ const dictSchema = new Schema(
       type: String,
       uppercase: true,
     },
-    uniqueTerm: {
-      type: String,
-      lowercase: true,
-      trim: true,
-    },
   },
   { versionKey: false }
 );

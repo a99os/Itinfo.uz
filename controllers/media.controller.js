@@ -1,11 +1,15 @@
 const { default: mongoose } = require("mongoose");
 const Media = require("../models/Media");
+const { mediaValidator } = require("../validations/media");
 
 const errorHandler = (res, error) => {
   res.status(500).send({ message: "Xatolik bor: " + error });
 };
 
 const addMedia = async (req, res) => {
+  const { error } = mediaValidator(req.body);
+  if (error) return res.status(400).send({ message: error.details[0].message });
+
   const { media_name, media_file, target_table_name, target_table_id } =
     req.body;
   if (!mongoose.isValidObjectId(target_table_id))
@@ -29,7 +33,8 @@ const addMedia = async (req, res) => {
 const getMedias = (req, res) => {
   Media.find()
     .then((data) => {
-      if (!data.length) return res.status(400).send({ message: "Media not found" });
+      if (!data.length)
+        return res.status(400).send({ message: "Media not found" });
       res.status(200).send(data);
     })
     .catch((err) => errorHandler(res, err));

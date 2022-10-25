@@ -8,7 +8,6 @@ const {
   deleteTerm,
 } = require("../controllers/dictionary.controller");
 const router = Router();
-
 router.get("/", getTerms);
 router.get("/id/:id", getTermById);
 router.get("/:letter", getTermsByLetter);

@@ -13,7 +13,7 @@ const questionAnswerSchema = new Schema(
       unique: true,
       trim: true,
     },
-    id_cheked: {
+    is_checked: {
       type: Boolean,
       required: true,
     },

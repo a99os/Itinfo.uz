@@ -2,11 +2,14 @@ const Synonim = require("../models/Synonim");
 const Dictionary = require("../models/Dictionary");
 const Description = require("../models/Description");
 const mongoose = require("mongoose");
+const { synonimValidator } = require("../validations/synonim");
 const errorHandler = (res, error) => {
   res.status(500).send({ message: "Xatolik bor: " + error });
 };
 
 const addSynonim = async (req, res) => {
+  const { error } = synonimValidator(req.body);
+  if (error) return res.status(400).send({ message: error.details[0].message });
   const { dict_id, desc_id } = req.body;
 
   if (!mongoose.isValidObjectId(dict_id))

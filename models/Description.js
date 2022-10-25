@@ -11,6 +11,7 @@ const descSchema = new Schema(
       type: String,
       required: true,
       trim: true,
+      unique: true,
     },
   },
   { versionKey: false }

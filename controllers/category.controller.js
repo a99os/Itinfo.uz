@@ -1,10 +1,17 @@
 const Category = require("../models/Category");
+const { categoryValidation } = require("../validations/category");
 const mongoose = require("mongoose");
 const errorHandler = (res, error) => {
   res.status(500).send({ message: "Xatolik bor: " + error });
 };
 
 const addCategory = async (req, res) => {
+  const { error } = categoryValidation(req.body);
+  if (error) {
+    console.log(error);
+    return res.status(400).send({ message: error.details[0].message });
+  }
+
   const { category_name } = req.body;
   const { parent_category_id } = req.body || null;
   if (

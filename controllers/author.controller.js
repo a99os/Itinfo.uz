@@ -1,11 +1,17 @@
 const { default: mongoose } = require("mongoose");
 const Author = require("../models/Author");
+const { authorValidator } = require("../validations/author");
 
 const errorHandler = (res, error) => {
   res.status(500).send({ message: "Xatolik bor: " + error });
 };
 
 const addAuthor = async (req, res) => {
+  const { error, value } = authorValidator(req.body);
+  if (error) {
+    return res.status(400).send({ message: error.details[0].message });
+  }
+  console.log(value);
   const {
     author_first_name,
     author_last_name,
@@ -17,11 +23,15 @@ const addAuthor = async (req, res) => {
     author_position,
     author_photo,
     is_expert,
-  } = req.body;
-  if (await Author.findOne({ email: email }))
+  } = value;
+  if (await Author.findOne({ author_email: author_email }))
     return res.status(400).send({ message: "this email already exists" });
-  if (await Author.findOne({ phone: phone }))
+  if (await Author.findOne({ author_phone: author_phone }))
     return res.status(400).send({ message: "this phone already exists" });
+  if (await Author.findOne({ author_nick_name: author_nick_name }))
+    return res
+      .status(400)
+      .send({ message: "this author_nick_name already exists" });
 
   Author({
     author_first_name,
@@ -66,8 +76,14 @@ const getAuthorById = (req, res) => {
 const updateAuthor = async (req, res) => {
   if (!mongoose.isValidObjectId(req.params.id))
     return res.status(400).send({ message: "Invalid id" });
-  if (!(await Author.findById(req.params.id)))
-    return res.status(400).send({ message: "Not found Author" });
+
+  const data = await Author.findById(req.params.id);
+
+  if (!data) return res.status(400).send({ message: "Not found Author" });
+
+  Object.keys(req.body).forEach((key) => {
+    data[key] = req.body[key];
+  });
 
   const {
     author_first_name,
@@ -80,26 +96,32 @@ const updateAuthor = async (req, res) => {
     author_position,
     author_photo,
     is_expert,
-  } = req.body;
-  if (await Author.findOne({ email: email }))
+  } = data;
+  const { error, value } = authorValidator({
+    author_first_name,
+    author_last_name,
+    author_nick_name,
+    author_email,
+    author_phone,
+    author_password,
+    author_info,
+    author_position,
+    author_photo,
+    is_expert,
+  });
+  console.log(value);
+  if (error) {
+    return res.status(400).send({ message: error.details[0].message });
+  }
+  const auth1 = await Author.findOne({ author_email: value.author_email });
+  if (auth1 && auth1._id != req.params.id)
     return res.status(400).send({ message: "this email already exists" });
-  if (await Author.findOne({ phone: phone }))
+  const auth2 = await Author.findOne({ author_phone: value.author_phone });
+  if (auth2 && auth2._id != req.params.id)
     return res.status(400).send({ message: "this phone already exists" });
 
-  const auth = await Author.findById(req.params.id);
-
-  Author.findByIdAndUpdate(req.params.id, {
-    author_first_name: author_first_name || auth.author_first_name,
-    author_last_name: author_last_name || auth.author_last_name,
-    author_nick_name: author_nick_name || author_email,
-    author_email: author_email || auth.author_email,
-    author_phone: author_phone || auth.author_phone,
-    author_password: author_password || auth.author_password,
-    author_info: author_info || auth.author_info,
-    author_position: author_position || auth.author_position,
-    author_photo: author_photo || auth.author_photo,
-    is_expert: is_expert || auth.is_expert,
-  })
+  console.log(value);
+  Author.findByIdAndUpdate(req.params.id, value)
     .then(() => {
       res.status(200).send({ message: "Succesfull update" });
     })

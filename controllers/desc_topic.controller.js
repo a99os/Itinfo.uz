@@ -2,11 +2,16 @@ const Desc_Topic = require("../models/Desc_Topic");
 const Topic = require("../models/Topic");
 const Description = require("../models/Description");
 const mongoose = require("mongoose");
+const { desc_topicValidator } = require("../validations/desc_topic");
+
 const errorHandler = (res, error) => {
   res.status(500).send({ message: "Xatolik bor: " + error });
 };
 
 const addDesc_Topic = async (req, res) => {
+  const { error } = desc_topicValidator(req.body);
+  if (error) return res.status(500).send({ message: error.details[0].message });
+
   const { topic_id, desc_id } = req.body;
 
   if (!mongoose.isValidObjectId(topic_id))

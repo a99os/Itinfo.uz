@@ -1,21 +1,20 @@
 const Description = require("../models/Description");
 const Category = require("../models/Category");
-const Dictionary = require("../models/Dictionary");
 const mongose = require("mongoose");
+const { descriptionValidate } = require("../validations/description");
 const errorHandler = (res, error) => {
   res.status(500).send({ message: "Xatolik bor: " + error });
 };
 
 const addDesc = async (req, res) => {
   const { category_id, description } = req.body;
-
-  if (!description)
-    return res.status(400).send({ message: "Invalid description" });
+  const { error, value } = descriptionValidate(req.body);
+  if (error) return res.status(400).send({ message: error.details[0].message });
 
   if (category_id && !mongose.isValidObjectId(category_id))
     return res.status(400).send({ message: "Invalid objectId category_id" });
 
-  if (category_id && !(await Category.findById(category_id)))
+  if (!(await Category.findById(category_id)))
     return res.status(400).send({ message: "Not found category_id" });
 
   Description({ category_id, description })

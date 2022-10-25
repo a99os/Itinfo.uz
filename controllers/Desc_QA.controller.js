@@ -2,11 +2,15 @@ const Desc_QA = require("../models/Desc_QA");
 const Question_Answer = require("../models/Question_Answer");
 const Description = require("../models/Description");
 const mongoose = require("mongoose");
+const { desc_qaValidator } = require("../validations/desc_qa");
 const errorHandler = (res, error) => {
   res.status(500).send({ message: "Xatolik bor: " + error });
 };
 
 const addDesc_QA = async (req, res) => {
+  const { error } = desc_qaValidator(req.body);
+  if (error) return res.status(500).send({ message: error.details[0].message });
+
   const { QA_id, desc_id } = req.body;
 
   if (!mongoose.isValidObjectId(QA_id))

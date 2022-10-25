@@ -7,10 +7,10 @@ const {
   updateSynonim,
   deleteSynonim,
 } = require("../controllers/synonim.controller");
-router.get = ("/", getSynonims);
-router.get = ("/:id", getSynonimById);
-router.post = ("/", addSynonim);
-router.put = ("/:id", updateSynonim);
-router.delete = ("/:id", deleteSynonim);
+router.get("/", getSynonims);
+router.get("/:id", getSynonimById);
+router.post("/", addSynonim);
+router.put("/:id", updateSynonim);
+router.delete("/:id", deleteSynonim);
 
 module.exports = router;

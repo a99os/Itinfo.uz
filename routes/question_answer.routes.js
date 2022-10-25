@@ -7,10 +7,10 @@ const {
   updateQuestion_Answer,
   deleteQuestion_Answer,
 } = require("../controllers/question_answer.controller");
-router.get = ("/", getQuestion_Answers);
-router.get = ("/:id", getQuestion_AnswerById);
-router.post = ("/", addQuestion_Answer);
-router.put = ("/:id", updateQuestion_Answer);
-router.delete = ("/:id", deleteQuestion_Answer);
+router.get ("/", getQuestion_Answers);
+router.get ("/:id", getQuestion_AnswerById);
+router.post ("/", addQuestion_Answer);
+router.put ("/:id", updateQuestion_Answer);
+router.delete ("/:id", deleteQuestion_Answer);
 
 module.exports = router;

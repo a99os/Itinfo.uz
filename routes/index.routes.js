@@ -1,9 +1,8 @@
 const { Router } = require("express");
-const router = Router();
 const dictionaryRoutes = require("./dictionary.routes");
+const authorRoutes = require("./author.routes");
 const categoryRoutes = require("./category.routes");
 const descriptionRoutes = require("./description.routes");
-const authorRoutes = require("./author.routes");
 const socialRoutes = require("./social.routes");
 const authorSocialRoutes = require("./author_social.routes");
 const topicRoutes = require("./topic.routes");
@@ -13,11 +12,12 @@ const desc_topicRoutes = require("./desc_topic.routes");
 const question_answerRoutes = require("./question_answer.routes");
 const synonimRoutes = require("./synonim.routes");
 const desc_qaRoutes = require("./desc_qa.routes");
+const router = Router();
 
-router.use("/api/dictionary", dictionaryRoutes);
 router.use("/api/category", categoryRoutes);
-router.use("/api/description", descriptionRoutes);
 router.use("/api/author", authorRoutes);
+router.use("/api/dictionary", dictionaryRoutes);
+router.use("/api/description", descriptionRoutes);
 router.use("/api/social", socialRoutes);
 router.use("/api/author_social", authorSocialRoutes);
 router.use("/api/topic", topicRoutes);

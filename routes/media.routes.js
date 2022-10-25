@@ -7,10 +7,10 @@ const {
   updateMedia,
   deleteMedia,
 } = require("../controllers/media.controller");
-router.get = ("/", getMedias);
-router.get = ("/:id", getMediaById);
-router.post = ("/", addMedia);
-router.put = ("/:id", updateMedia);
-router.delete = ("/:id", deleteMedia);
+router.get ("/", getMedias);
+router.get ("/:id", getMediaById);
+router.post("/", addMedia);
+router.put ("/:id", updateMedia);
+router.delete ("/:id", deleteMedia);
 
 module.exports = router;

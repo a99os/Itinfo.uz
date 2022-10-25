@@ -1,5 +1,6 @@
 const { default: mongoose } = require("mongoose");
 const Social = require("../models/Social");
+const { socialValidate } = require("../validations/social");
 
 const errorHandler = (res, error) => {
   res.status(500).send({ message: "Xatolik bor: " + error });
@@ -7,6 +8,10 @@ const errorHandler = (res, error) => {
 
 const addSocial = async (req, res) => {
   const { social_name, social_icon_file } = req.body;
+
+  const { error, value } = socialValidate(req.body);
+  if (error) return res.status(400).send({ message: error.details[0].message });
+
   if (await Social.findOne({ social_name }))
     return res.status(400).send({ message: "this social already exists" });
   if (!social_name || !social_icon_file)

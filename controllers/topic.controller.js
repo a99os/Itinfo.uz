@@ -1,21 +1,25 @@
 const { default: mongoose } = require("mongoose");
 const Topic = require("../models/Topic");
+const Author = require("../models/Author");
+
+const { topicValidator } = require("../validations/topic");
 
 const errorHandler = (res, error) => {
   res.status(500).send({ message: "Xatolik bor: " + error });
 };
 
 const addTopic = async (req, res) => {
+  const { error, value } = topicValidator(req.body);
+  if (error) return res.status(400).send({ message: error.details[0].message });
   const {
     author_id,
     topic_title,
     topic_text,
-    topic_email,
     is_checked,
     is_approved,
     expert_id,
-  } = req.body;
-  if (await Topic.findOne({ title: title }))
+  } = value;
+  if (await Topic.findOne({ topic_title: topic_title }))
     return res.status(400).send({ message: "this topic already exists" });
   if (!mongoose.isValidObjectId(author_id))
     return res.status(400).send({ message: "Invalid objectId author_id" });
@@ -29,15 +33,7 @@ const addTopic = async (req, res) => {
   if (!(await Author.findOne({ expert_id: expert_id })))
     return res.status(400).send({ message: "Not found expert_id" });
 
-  Topic({
-    author_id,
-    topic_title,
-    topic_text,
-    topic_email,
-    is_checked,
-    is_approved,
-    expert_id,
-  })
+  Topic(value)
     .save()
     .then(() => {
       res.status(200).send({ message: "succesful add Topic" });
@@ -76,12 +72,11 @@ const updateTopic = async (req, res) => {
     author_id,
     topic_title,
     topic_text,
-    topic_email,
     is_checked,
     is_approved,
     expert_id,
   } = req.body;
-  if (await Topic.findOne({ title: title }))
+  if (await Topic.findOne({ topic_title: topic_title }))
     return res.status(400).send({ message: "this topic already exists" });
   if (author_id && !mongoose.isValidObjectId(author_id))
     return res.status(400).send({ message: "Invalid objectId author_id" });
@@ -101,7 +96,6 @@ const updateTopic = async (req, res) => {
     author_id: author_id || topic.author_id,
     topic_title: topic_title || topic.topic_title,
     topic_text: topic_text || topic.topic_text,
-    topic_email: topic_email || topic.topic_email,
     is_checked: is_checked || topic.is_checked,
     is_approved: is_approved || topic.is_approved,
     expert_id: expert_id || topic.expert_id,

@@ -2,11 +2,14 @@ const Tag = require("../models/Tag");
 const Topic = require("../models/Topic");
 const Category = require("../models/Category");
 const mongoose = require("mongoose");
+const { tagValidator } = require("../validations/tag");
 const errorHandler = (res, error) => {
   res.status(500).send({ message: "Xatolik bor: " + error });
 };
 
 const addTag = async (req, res) => {
+  const { error } = tagValidator(req.body);
+  if (error) return res.status(400).send({ message: error.details[0].message });
   const { topic_id, category_id } = req.body;
 
   if (!mongoose.isValidObjectId(topic_id))
