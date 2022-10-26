@@ -1,4 +1,5 @@
 {
   "port": 3000,
-  "dbUri": "mongodb://localhost:27017/itinfo"
+  "dbUri": "mongodb://localhost:27017/itinfo",
+  "secret": "Ahbjc$&^654Hkjd"
 }

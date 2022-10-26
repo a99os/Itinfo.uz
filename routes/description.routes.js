@@ -6,11 +6,12 @@ const {
   updateDesc,
   deleteDesc,
 } = require("../controllers/description.controller");
+const adminPolice = require("../middleware/adminPolice");
 const router = Router();
 
-router.post("/", addDesc);
+router.post("/", adminPolice, addDesc);
 router.get("/", getDescs);
 router.get("/:id", getDescById);
-router.put("/:id", updateDesc);
-router.delete("/:id", deleteDesc);
+router.put("/:id", adminPolice, updateDesc);
+router.delete("/:id", adminPolice, deleteDesc);
 module.exports = router;

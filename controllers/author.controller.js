@@ -1,6 +1,15 @@
 const { default: mongoose } = require("mongoose");
 const Author = require("../models/Author");
 const { authorValidator } = require("../validations/author");
+const bcrypt = require("bcrypt");
+const Joi = require("joi");
+const jwt = require("jsonwebtoken");
+const config = require("config");
+
+const generationAccesToken = (id, is_expert, authorRoles) =>
+  jwt.sign({ id, is_expert, authorRoles }, config.get("secret"), {
+    expiresIn: "8h",
+  });
 
 const errorHandler = (res, error) => {
   res.status(500).send({ message: "Xatolik bor: " + error });
@@ -33,13 +42,14 @@ const addAuthor = async (req, res) => {
       .status(400)
       .send({ message: "this author_nick_name already exists" });
 
+  const authorHashedPassword = bcrypt.hashSync(author_password, 7);
   Author({
     author_first_name,
     author_last_name,
     author_nick_name,
     author_email,
     author_phone,
-    author_password,
+    author_password: authorHashedPassword,
     author_info,
     author_position,
     author_photo,
@@ -140,10 +150,54 @@ const deleteAuthor = async (req, res) => {
     })
     .catch((error) => errorHandler(res, error));
 };
+
+const emailValidate = (email) =>
+  Joi.string().email().validate(email).error == undefined;
+const phoneValidate = (phone) =>
+  Joi.string()
+    .pattern(/\d{2}-\d{3}-\d{2}-\d{2}/)
+    .length(12)
+    .validate(phone).error == undefined;
+
+const loginAuthor = async (req, res) => {
+  try {
+    const { data, author_password } = req.body;
+
+    let author;
+
+    if (emailValidate(data))
+      author = await Author.findOne({ author_email: data });
+    else if (phoneValidate(data)) {
+      author = await Author.findOne({ author_phone: data });
+    } else author = await Author.findOne({ author_nick_name: data });
+
+    if (!author)
+      return res
+        .status(400)
+        .send({ message: "nick, email, phone yoki parol noto'g'ri" });
+    const validPassword = bcrypt.compareSync(
+      author_password,
+      author.author_password
+    );
+    if (!validPassword)
+      return res
+        .status(400)
+        .send({ message: "nick, email, phone yoki parol noto'g'ri" });
+
+    const token = generationAccesToken(author._id, author.is_expert, [
+      "READ",
+      "WRITE",
+    ]);
+    res.status(400).json(token);
+  } catch (error) {
+    errorHandler(res, error);
+  }
+};
 module.exports = {
   addAuthor,
   getAuthors,
   getAuthorById,
   updateAuthor,
   deleteAuthor,
+  loginAuthor,
 };

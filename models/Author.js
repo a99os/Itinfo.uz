@@ -37,7 +37,7 @@ const authorSchema = new Schema(
     author_password: {
       type: String,
       required: true,
-      maxlength: 32,
+      maxlength: 255,
       minlength: 6,
       trim: true,
     },

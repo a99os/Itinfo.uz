@@ -12,9 +12,13 @@ const desc_topicRoutes = require("./desc_topic.routes");
 const question_answerRoutes = require("./question_answer.routes");
 const synonimRoutes = require("./synonim.routes");
 const desc_qaRoutes = require("./desc_qa.routes");
+const adminRoutes = require("./admin.routes");
+const userRoutes = require("./user.routes");
 const router = Router();
 
 router.use("/api/category", categoryRoutes);
+router.use("/api/user", userRoutes);
+router.use("/api/admin", adminRoutes);
 router.use("/api/author", authorRoutes);
 router.use("/api/dictionary", dictionaryRoutes);
 router.use("/api/description", descriptionRoutes);
